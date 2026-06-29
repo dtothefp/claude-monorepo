@@ -85,6 +85,8 @@ A consistent way to bring the outside world into a local wiki, then query it. Ev
 | PDF, .docx, attached file, long pasted text | `document-ingest` agent |
 | Voice memo, meeting notes, transcript | `personal-ingest` agent (pulls action items into TODO.md) |
 | Social creator (Instagram, TikTok, YouTube) | `social-ingest` agent |
+| A YouTube video, just the transcript text | `youtube-research` skill (no API key) |
+| A local audio file (.opus, .mp3, .m4a, .wav) | `transcribe` skill (mlx-whisper, offline, no key) |
 
 All ingest agents call the `wiki-ingest` skill. Every ingest produces a dated source file, a `research/log.md` entry, and an `index.md` cross-link, which makes it eligible for the next graph rebuild.
 
@@ -102,7 +104,7 @@ All ingest agents call the `wiki-ingest` skill. Every ingest produces a dated so
 
 | Source | Use |
 |---|---|
-| Stay current on Claude tooling | `news-research`, `youtube-research`, `newsletter-digest` skills |
+| Stay current on Claude tooling | `news-research`, `newsletter-digest` skills |
 | Wider weekly AI-ecosystem sweep | `ai-ecosystem-research` skill / `infra-improver` agent |
 | Trending creators, scraping a watchlist | `intelligence-agent` |
 | Instagram keyword research | `ig-research` skill |

@@ -35,6 +35,8 @@ The reason this boilerplate exists. A consistent way to bring the outside world 
 | PDF, .docx, attached file, long pasted text | `document-ingest` agent |
 | Voice memo, meeting notes, transcript | `personal-ingest` agent (extracts action items to TODO.md) |
 | Social creator (Instagram, TikTok, YouTube) | `social-ingest` agent |
+| A YouTube video, just the transcript text | `youtube-research` skill (no API key) |
+| A local audio file (.opus, .mp3, .m4a, .wav) | `transcribe` skill (mlx-whisper, offline, no key) |
 
 All ingest agents call the `wiki-ingest` skill internally. Every ingest produces a dated source-of-truth file plus a `research/log.md` entry plus an `index.md` cross-link, which makes the file eligible for the next knowledge-graph rebuild. When you attach a file with no other instruction, `document-ingest` auto-fires.
 
@@ -52,7 +54,7 @@ All ingest agents call the `wiki-ingest` skill internally. Every ingest produces
 
 | Source | Use |
 |---|---|
-| Stay current on Claude tooling | `news-research`, `youtube-research`, `newsletter-digest` skills |
+| Stay current on Claude tooling | `news-research`, `newsletter-digest` skills |
 | Wider weekly AI-ecosystem sweep | `ai-ecosystem-research` skill / `infra-improver` agent |
 | Trending creators in a niche, scraping a watchlist | `intelligence-agent` |
 | Instagram keyword research | `ig-research` skill |
