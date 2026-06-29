@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace-manifest.json",
+  "name": "dtothefp",
+  "owner": {
+    "name": "David Fox-Powell",
+    "email": "dtothefp@gmail.com"
+  },
+  "description": "Boilerplate workspace and research pipeline for AI coding agents.",
+  "plugins": [
+    {
+      "name": "claude-monorepo",
+      "source": "."
+    }
+  ]
+}

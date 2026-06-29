@@ -1,76 +1,160 @@
 # Claude Monorepo
 
-A boilerplate for running your work out of one AI-agent workspace. One parent repo, one consistent memory, every project in one place, plus a ready-made research, ingestion, and discovery pipeline that any AI coding agent (Claude Code, Codex, Cursor, Gemini CLI) can drive.
+> A research, ingestion, and discovery pipeline for any AI coding agent. Bring the outside world into a local knowledge wiki, then query it back out. Install it as a Claude Code plugin, or clone it as a whole workspace.
 
-> **New here? Read [START-HERE.md](START-HERE.md).** It's the runbook: what's in the box, how to clone projects down, what to wire up, and how the pieces fit.
+![license](https://img.shields.io/badge/license-MIT-blue)
+![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-7c3aed)
+![skills](https://img.shields.io/badge/skills-16-green)
+![agents](https://img.shields.io/badge/agents-11-green)
+![hooks](https://img.shields.io/badge/hooks-3-green)
+![Shell](https://img.shields.io/badge/Shell-grey?logo=gnu-bash&logoColor=white)
+![Python](https://img.shields.io/badge/Python-grey?logo=python&logoColor=white)
+![Markdown](https://img.shields.io/badge/Markdown-grey?logo=markdown&logoColor=white)
 
-## What this is
+This is a boilerplate. A parent workspace that gives any AI coding agent (Claude Code, Codex, Cursor, Gemini CLI) one consistent memory across every project you work on, plus a ready-made pipeline for pulling the outside world in (URLs, PDFs, voice notes, social, newsletters) and querying it back out. Clone it, strip the example, make it yours.
 
-A parent workspace that sits above all your projects. It holds the high-level rules for how you work (`AGENTS.md`), a shared research wiki (`research/`), and a set of Claude Code skills and agents under `.claude/` for pulling the outside world into a local knowledge base and querying it back out.
+## Install
 
-The projects themselves live in `packages/`, each as its own independent git repo. This repo only tracks its own files.
+### As a Claude Code plugin
 
-## Why you'd use it
-
-If you work across many projects with an AI agent, you re-explain context every session and your research scatters. This fixes both. One memory layer, one wiki, one pipeline for getting URLs, PDFs, voice notes, social posts, and newsletters into a queryable knowledge graph, and a clean three-tier structure for parent, projects, and deployable apps.
-
-## The three tiers
+Pulls in the 16 skills, 11 agents, and 3 hooks without cloning the whole workspace.
 
 ```
-claude-monorepo/             <- this repo (parent). Rules + task tracking + shared research + skills/agents.
-├── AGENTS.md                <- how you work. Read first. (CLAUDE.md + GEMINI.md symlink to it)
-├── README.md                <- you are here
-├── START-HERE.md            <- the runbook
-├── TODO.md                  <- cross-project task list
-├── GOVERNANCE.md            <- memory + wiki rules
-├── .env.example             <- the keys the pipeline can use (all optional)
-├── .claude/
-│   ├── skills/              <- /graphify, wiki-ingest, web-ingest, research skills, ...
-│   ├── agents/              <- ingest + retrieval + discovery agents
-│   └── hooks/               <- research-log auto-append, em-dash lint, ingest suggest
-├── research/                <- the shared knowledge wiki (index + log + topic dirs)
-├── decisions/              <- architecture decision records
-├── scripts/                <- helper scripts (transcribe voice notes, ...)
-└── packages/               <- each child project, its own repo (gitignored here)
+/plugin marketplace add dtothefp/claude-monorepo
+/plugin install claude-monorepo@dtothefp
 ```
 
-Parent and projects work on `main`. Apps always work on a feature branch with a PR. Full rules in [AGENTS.md](AGENTS.md).
+### As a workspace (clone)
 
-## What's in the pipeline
-
-Three motions, all writing into the same wiki so everything stays queryable.
-
-- **Ingest** new material: `web-ingest`, `document-ingest`, `personal-ingest`, `social-ingest` agents.
-- **Retrieve** what you have: `wiki-query` skill, `research-professor`, `workspace-cartographer`, `project-status-scout` agents, or `/orient <topic>` to fan out all three.
-- **Discover** what's new: `news-research`, `youtube-research`, `newsletter-digest`, `ai-ecosystem-research`, `ig-research` skills, `intelligence-agent` and `infra-improver` agents.
-
-`/graphify <path>` turns the wiki into a navigable knowledge graph. `/menu` prints the full cheat-sheet. See [AGENTS.md](AGENTS.md) for the routing tables.
-
-## Getting started
+Get the full three-tier structure, the research wiki, and the docs.
 
 ```bash
-# clone this workspace
 git clone https://github.com/dtothefp/claude-monorepo.git
 cd claude-monorepo
-
-# copy the env template and fill in whatever you use (all keys are optional)
-cp .env.example .env
-
-# clone your projects into packages/
-cd packages/
-git clone <repo-url> my-first-project
 ```
 
-`packages/*/` is gitignored, so each project stays an independent repo. The parent only tracks its own files. Open the workspace in Claude Code (or your agent of choice) and type `/menu`.
+### Copy components manually
 
-## The one rule that matters most
+Grab only what you want. Every component is a plain file.
 
-Never commit secrets. API keys, passwords, tokens go in a `.env` file that's always gitignored. Every project ships a `.env.example` with placeholders. Deployed apps keep secrets in the host's secret store. See the Secrets section in [AGENTS.md](AGENTS.md).
+```bash
+cp -r claude-monorepo/.claude/skills/web-ingest   your-project/.claude/skills/
+cp    claude-monorepo/.claude/agents/research-professor.md your-project/.claude/agents/
+```
+
+## What's inside
+
+This repo is a Claude Code plugin and a clonable workspace at the same time.
+
+```
+claude-monorepo/
+|-- .claude-plugin/
+|   |-- plugin.json          # Plugin manifest, points at .claude/
+|   |-- marketplace.json     # Marketplace catalog for /plugin marketplace add
+|
+|-- .claude/
+|   |-- skills/              # 16 skills (ingest, retrieve, discover, utility)
+|   |-- agents/              # 11 agents (subagents for delegation)
+|   |-- hooks/               # 3 hooks (lint, log-append, ingest-suggest)
+|   |-- settings.json        # Wires the hooks in workspace mode
+|
+|-- AGENTS.md                # Central rules (CLAUDE.md + GEMINI.md symlink to it)
+|-- README.md
+|-- START-HERE.md            # Runbook
+|-- GOVERNANCE.md            # Wiki and directory rules
+|-- TODO.md
+|-- LICENSE                  # MIT
+|-- .env.example             # Placeholder keys, all optional
+|
+|-- packages/                # Your projects go here, one repo each (gitignored)
+|-- research/                # The shared knowledge wiki
+|   |-- index.md             # Curated entry point
+|   |-- log.md               # Append-only changelog
+|-- decisions/               # Architecture decision records
+```
+
+## The pipeline (the point of this repo)
+
+A consistent way to bring the outside world into a local wiki, then query it. Everything writes into `research/`, and a `/graphify` build makes it queryable as a knowledge graph.
+
+### Ingest (bring something in)
+
+| Source | Use |
+|---|---|
+| A single URL, article, blog, thread | `web-ingest` agent |
+| PDF, .docx, attached file, long pasted text | `document-ingest` agent |
+| Voice memo, meeting notes, transcript | `personal-ingest` agent (pulls action items into TODO.md) |
+| Social creator (Instagram, TikTok, YouTube) | `social-ingest` agent |
+
+All ingest agents call the `wiki-ingest` skill. Every ingest produces a dated source file, a `research/log.md` entry, and an `index.md` cross-link, which makes it eligible for the next graph rebuild.
+
+### Retrieve (answer from what you already have)
+
+| Need | Use |
+|---|---|
+| "What do we know about X?" | `wiki-query` skill (graph-first) |
+| Substantive synthesis across many sources | `research-professor` agent |
+| "Where does X live?" structural question | `workspace-cartographer` agent |
+| Current state of one project | `project-status-scout` agent |
+| Lay of the land on a new topic | `/orient <topic>` (fans out the three above) |
+
+### Discover (find new sources, tools, topics)
+
+| Source | Use |
+|---|---|
+| Stay current on Claude tooling | `news-research`, `youtube-research`, `newsletter-digest` skills |
+| Wider weekly AI-ecosystem sweep | `ai-ecosystem-research` skill / `infra-improver` agent |
+| Trending creators, scraping a watchlist | `intelligence-agent` |
+| Instagram keyword research | `ig-research` skill |
+
+### The knowledge graph
+
+`/graphify <path>` turns a folder of research into a navigable knowledge graph (interactive HTML, GraphRAG-ready JSON, a plain-language report). Point it at `research/` to build cross-document entity links the index alone never captures. The retrieval skills are graph-first when a graph exists and fall back to the index plus a freshness check otherwise.
+
+Type `/menu` any time for the full navigation cheat-sheet.
+
+## Works on every tool
+
+The rules live in `AGENTS.md`. `CLAUDE.md` and `GEMINI.md` are symlinks to it, so the same instructions load in:
+
+- **Claude Code** (native skills, agents, hooks, plugin install)
+- **Cursor** (reads `AGENTS.md`)
+- **Codex CLI** (reads `AGENTS.md`)
+- **Gemini CLI** (reads `GEMINI.md`)
+
+The skills and agents are plain markdown and shell. The graph build and a couple of media skills use Python. Nothing is locked to one vendor.
+
+## Three tiers (workspace mode)
+
+1. **Parent** (this repo). Cross-project rules, task tracking, the shared wiki. Works on `main`.
+2. **Packages** (`packages/<name>/`). One independent git repo per project, gitignored from the parent so each stays on its own remote. Works on `main`.
+3. **Apps** (`packages/<name>/app/`). The deployable app inside a project, its own repo, feature branches and PRs only.
+
+To add a project:
+
+```bash
+cd packages/
+git clone <repo-url> <name>
+```
+
+## Hooks (opinionated, easy to drop)
+
+Three hooks ship wired up. They are deliberate about house style, so read before you adopt them.
+
+- **em-dash-lint** (PreToolUse). Blocks any `Write`/`Edit` that contains an em or en dash. A style rule, not everyone's taste. Delete the hook entry to turn it off.
+- **research-log-append** (PostToolUse). Appends a line to `research/log.md` when a wiki file is written. No-op outside the wiki.
+- **wiki-ingest-suggest** (UserPromptSubmit). Nudges you to ingest when you paste something worth capturing.
+
+In workspace mode they are wired in `.claude/settings.json`. In plugin mode they are wired in `plugin.json` via `${CLAUDE_PLUGIN_ROOT}`. Remove the ones you do not want.
+
+## Secrets
+
+Never commit keys. Real secrets live in a gitignored `.env`. This repo ships only `.env.example` with placeholders, and every key in it is optional. Wire up whichever connectors you use and document them in your own copy of `AGENTS.md`.
 
 ## Credits
 
-The knowledge-graph build uses the bundled `graphify` skill. Topic discovery pairs well with the MIT-licensed [last30days](https://github.com/mvanhorn/last30days-skill) skill (not bundled, install separately if you want it).
+The pipeline pattern borrows from Andrej Karpathy's three-layer wiki idea (immutable sources, a curated index, an append-only log). The plugin and marketplace format follows the Claude Code plugin spec.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE). Copyright (c) 2026 David Fox-Powell.

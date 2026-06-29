@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "claude-monorepo",
+  "displayName": "Claude Monorepo",
+  "version": "1.0.0",
+  "description": "A research, ingestion, and discovery pipeline for any AI coding agent. 16 skills, 11 agents, 3 hooks, and a knowledge-graph wiki.",
+  "author": {
+    "name": "David Fox-Powell",
+    "email": "dtothefp@gmail.com",
+    "url": "https://github.com/dtothefp"
+  },
+  "homepage": "https://github.com/dtothefp/claude-monorepo",
+  "repository": "https://github.com/dtothefp/claude-monorepo",
+  "license": "MIT",
+  "keywords": [
+    "research",
+    "ingestion",
+    "discovery",
+    "knowledge-graph",
+    "wiki",
+    "agents",
+    "skills",
+    "pipeline",
+    "boilerplate"
+  ],
+  "skills": "./.claude/skills/",
+  "agents": "./.claude/agents/",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/em-dash-lint.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/research-log-append.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}\"/.claude/hooks/wiki-ingest-suggest.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
