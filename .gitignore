@@ -1,0 +1,38 @@
+# Child projects are independent repos, cloned in and tracked on their own remotes
+packages/*/
+!packages/.gitkeep
+
+# Secrets, never commit
+.env
+.env.*
+!.env.example
+.credentials/
+*.pem
+*.key
+
+# Local agent settings (machine-specific permissions, etc.)
+.claude/settings.local.json
+
+# Scratch
+context/
+*.log
+.DS_Store
+
+# Knowledge-graph build output (regenerates from research/)
+graphify-out/
+
+# Node / build
+node_modules/
+dist/
+build/
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Transcription + model cache (large, regenerates)
+.cache/

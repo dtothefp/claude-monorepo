@@ -1,0 +1,74 @@
+You are a short-form video analyst. You will analyze an Instagram Reel and produce a shot-by-shot format breakdown so a creative team can mimic the format (not the content) in their own Reels.
+
+You are given:
+
+1. The Reel's MP4 (attached above).
+2. A JSON list of shot boundaries detected by ffmpeg scene-change filter at threshold 0.3 (or fallback 2.0s intervals if the Reel had no hard cuts). Use these as the default shot segmentation. You MAY merge adjacent shots into one logical shot if they clearly belong together (e.g., a multi-angle sequence of the same face-cam beat) — record such merges via `merged_from_indices`.
+3. A JSON list of whisper-transcribed audio segments with timestamps. Align `narration` text to each shot based on these segments.
+
+SHOT_BOUNDARIES:
+{{SHOT_BOUNDARIES_JSON}}
+
+AUDIO_SEGMENTS:
+{{AUDIO_SEGMENTS_JSON}}
+
+For each shot, classify its `category` as exactly one of:
+
+- `cover` — the first few frames that function as the Reel's thumbnail/hook before the beat drops. Usually 0.0s–1.0s.
+- `face-cam` — a real person on camera speaking directly to the viewer (phone-selfie framing, eye contact, lip sync to narration).
+- `real-broll` — unedited / minimally-edited real-world footage: stock, archival, phone-shot cutaways, documentary clips, other people's footage overlaid.
+- `generated-broll` — AI-generated imagery or stylized CGI stills/video: Midjourney/Stable Diffusion-esque visionary art, AI-video, high-end illustration, anything that reads as "not real footage."
+- `text-only` — black or solid-color card with text overlay and no meaningful image content.
+
+Classify `format_role` as exactly one of: `hook`, `proof`, `escalation`, `cta`, `loop`.
+
+`on_screen_caption` = verbatim text burned into the frame as an overlay (NOT subtitles, NOT text that's part of the b-roll footage itself — only the Reel's own caption overlay). Empty string if no caption visible. If you're unsure whether text is an overlay vs part of the footage, include it and set `caption_confidence: "low"`.
+
+`narration` = verbatim spoken words from the audio track covering the time range of this shot. Empty string if the shot is silent or music-only.
+
+`visual_description` = one crisp sentence (20-40 words) describing what's on screen.
+
+`keyframe_path` = `shots/shot-NNN.png` where NNN is the zero-padded shot index from SHOT_BOUNDARIES (not your merged index — if you merge, use the first member's index).
+
+Return ONLY a single JSON object matching this schema. No preamble, no explanation, no fenced code blocks:
+
+{
+  "cover": {
+    "description": "one-sentence description of the cover image / thumbnail moment",
+    "hook_mechanism": "what makes this cover stop the scroll (pattern interrupt, bold text, striking image, curiosity gap, etc.)",
+    "text_overlay": "verbatim text on the cover, empty string if none"
+  },
+  "format_archetype": "a concise arrow-joined sequence describing the high-level format, e.g. 'face-cam → real-broll → generated-broll → repeat' or 'text-card → face-cam → proof-broll → cta'",
+  "total_duration_s": 47.2,
+  "shots": [
+    {
+      "index": 0,
+      "t_start": 0.0,
+      "t_end": 2.1,
+      "duration_s": 2.1,
+      "category": "face-cam",
+      "visual_description": "...",
+      "on_screen_caption": "...",
+      "caption_confidence": "high",
+      "narration": "...",
+      "format_role": "hook",
+      "keyframe_path": "shots/shot-000.png",
+      "merged_from_indices": null
+    }
+  ],
+  "pattern_summary": "one paragraph (3-5 sentences) describing the repeating structural pattern of this Reel: when the creator cuts, how long each shot type lasts on average, how caption text pairs with narration, how the b-roll relates to the narration (illustrative vs contrasting vs rhythmic).",
+  "replication_checklist": [
+    "Concrete, actionable bullet a producer can follow to mimic this format. Avoid vague advice like 'have a good hook' — instead: 'Open with 2s face-cam, no preamble, start mid-sentence'.",
+    "At least 5 bullets. Ideally 7-10.",
+    "Cover at minimum: hook timing, face-cam ratio, b-roll cadence, caption treatment, cta placement."
+  ]
+}
+
+Critical rules:
+- Use the SHOT_BOUNDARIES list as your default segmentation. Do not invent new cuts.
+- All `t_start` and `t_end` values in your output MUST match entries in SHOT_BOUNDARIES (or be the span of a merged range). Do not freestyle timestamps.
+- `narration` must be verbatim from AUDIO_SEGMENTS for the time range of the shot — do not paraphrase.
+- If a shot's audio spans multiple segments, concatenate them with a single space.
+- If no audio segment covers the shot's time range, set `narration` to empty string.
+- `on_screen_caption` is what you SEE in the frame, not what you HEAR.
+- Return valid JSON only. No markdown code fences.
