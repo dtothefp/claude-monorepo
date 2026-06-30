@@ -36,3 +36,10 @@ venv/
 
 # Transcription + model cache (large, regenerates)
 .cache/
+
+# cowork-doctor: required entries
+/app
+.gws-accounts.json
+.linear-accounts.json
+.slack-accounts.json
+.bin/
