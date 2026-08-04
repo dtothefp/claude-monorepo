@@ -37,6 +37,17 @@ venv/
 # Transcription + model cache (large, regenerates)
 .cache/
 
+# Terraform. State carries project numbers and IAM bindings, tfvars carries org
+# IDs and admin emails. Only the .example files are committed.
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/tfplan
+**/*.tfplan
+**/terraform.tfvars
+**/*.auto.tfvars
+
 # cowork-doctor: required entries
 /app
 .gws-accounts.json

@@ -1,0 +1,20 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored because
+# it carries the Workspace's org id and your work email.
+#
+#   cp terraform.tfvars.example terraform.tfvars
+
+# Signed in as your work account, run:  gcloud organizations list
+# Use the bare numeric ID from the ID column, no "organizations/" prefix.
+org_id = "000000000000"
+
+# Your full Workspace email. Explicitly not your personal Gmail.
+workspace_account = "REPLACE_ME@REPLACE_ME"
+
+# Optional. Only set this if your Workspace admins blocks project creation at the org root
+# and gives you a folder instead. Leave commented out otherwise.
+#   gcloud resource-manager folders list --organization=<org_id>
+# folder_id = "000000000000"
+
+# Optional overrides. Defaults are gws-work / "GWS Work".
+# project_id   = "gws-work"
+# project_name = "GWS Work"

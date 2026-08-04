@@ -1,0 +1,47 @@
+{
+  "_comment": [
+    "Template registry. Copy to the workspace root as .gws-accounts.json and edit.",
+    "The real file is gitignored because it maps aliases to real email addresses.",
+    "",
+    "Fields per account:",
+    "  email              full Google account address",
+    "  credential_file    where gws-auth-setup.sh writes the exported refresh token",
+    "  client_secret_file the Desktop OAuth client JSON downloaded from GCP console",
+    "  project_id         the GCP project that owns the OAuth client. Sent as",
+    "                     x-goog-user-project. Must be the project ID, not the name.",
+    "  scopes             'workspace-no-cloud' or omitted. See the note below.",
+    "  projects           child project dirs this alias serves, used by",
+    "                     gws-distribute-accounts.sh",
+    "",
+    "ABOUT scopes: omit it and the account is granted cloud-platform along with",
+    "the Workspace scopes, which is the historical default and is correct for a",
+    "domain you administer. Set it to 'workspace-no-cloud' for any account on a",
+    "Workspace domain you do NOT administer, such as an employer's. Carrying a",
+    "Google Cloud scope subjects the token to Google Cloud session control's",
+    "reauth clock (roughly 16h), which surfaces as invalid_rapt, and turning that",
+    "policy off requires super-admin. See RUNBOOK.md."
+  ],
+
+  "accounts": {
+    "personal": {
+      "email": "REPLACE_ME@gmail.com",
+      "credential_file": ".credentials/personal.json",
+      "client_secret_file": ".credentials/client_secret_personal.json",
+      "project_id": "REPLACE-ME-gws-personal",
+      "description": "Consumer Gmail. External consent screen, Publish App.",
+      "projects": []
+    },
+
+    "work": {
+      "email": "REPLACE_ME@your-employer-domain",
+      "credential_file": ".credentials/work.json",
+      "client_secret_file": ".credentials/client_secret_work.json",
+      "project_id": "REPLACE-ME-gws-work",
+      "description": "Workspace domain you do NOT administer. Internal consent screen.",
+      "scopes": "workspace-no-cloud",
+      "projects": []
+    }
+  },
+
+  "default": "personal"
+}

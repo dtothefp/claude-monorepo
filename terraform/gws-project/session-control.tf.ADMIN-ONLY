@@ -1,0 +1,132 @@
+# ============================================================================
+# NOT ACTIVE. This file ends in .ADMIN-ONLY so terraform ignores it.
+#
+# Do NOT rename this to session-control.tf and apply it as a regular your employer org
+# member. Every resource below is org-scoped and will 403. This file exists so
+# that IF your Workspace admins agrees to help, there is something concrete to hand them
+# instead of a vague request.
+#
+# WHEN YOU NEED THIS: only if, after authenticating the account WITHOUT
+# the cloud-platform scope, tokens still die with
+#   invalid_grant: reauth related error (invalid_rapt)
+# Give it 48h of real use before concluding that. See README.md.
+#
+# WHO APPLIES IT: an Workspace super-admin, from their own machine, under
+# their own ADC. Not you.
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# READ THIS FIRST. THE SEMANTICS ARE COUNTERINTUITIVE AND HAVE CAUSED A REAL
+# TWO-ORG LOCKOUT (2026-06-23).
+#
+#   session_length_enabled = false  => infinite session => NEVER reauth. THE GOAL.
+#                                      The session_length value is disregarded.
+#
+#   session_length = "0s" + enabled = true
+#                                   => Google reads this as "disabling session"
+#                                      => CONSTANT reauth => every member of the
+#                                      bound group is LOCKED OUT of GCP.
+#
+# The zero-length form has locked real users out of GCP entirely. Never write it.
+#
+# Two more hard-won details:
+#   - Durations must be seconds-form. "24h" fails binding create with
+#     "Illegal duration format; duration must end with 's'". Use "86400s".
+#   - Omitting session_reauth_method causes a perpetual plan diff, because the
+#     server defaults it to LOGIN.
+#
+# ESCAPE HATCH if a lockout happens anyway: admin.google.com has its own
+# separate ~1h session that is NOT gated by Cloud session control, so the Admin
+# console still works when GCP does not. Remove the affected user from the bound
+# group there and access is restored immediately. Which is why the break-glass
+# super-admin must NEVER be a member of the bound group.
+# ----------------------------------------------------------------------------
+
+# These variables do not exist in variables.tf, because this file is inactive.
+# Whoever activates this adds them.
+#
+#   variable "customer_id"   { type = string }  # bare id, e.g. C0abc123x
+#   variable "admin_account" { type = string }  # the super-admin running it
+#   variable "session_exempt_group_email" { type = string }
+#
+# customer_id comes from, under the admin's ADC:
+#   gcloud organizations describe <org_id> --format='value(owner.directoryCustomerId)'
+#
+# This stack's default provider has no billing_project. Cloud Identity and
+# Access Context Manager calls are org/customer-scoped and carry no `project`
+# attribute of their own, so they need a quota-project header. Add an aliased
+# provider (see the aliased-provider note in main.tf for the exact shape) and
+# put `provider = google.billed` on all three resources below. Setting
+# billing_project on the DEFAULT provider instead will 400 the google_project
+# creation call, because the project does not exist yet at that point.
+
+# resource "google_cloud_identity_group" "session_exempt" {
+#   provider = google.billed
+#
+#   display_name = "GCP Session Exempt (CLI mail readers)"
+#   description  = "Members are exempt from Google Cloud reauthentication. Carries the no-reauth GcpUserAccessBinding so CLI tokens do not die on the ~16h RAPT clock."
+#   parent       = "customers/${var.customer_id}"
+#
+#   group_key {
+#     id = var.session_exempt_group_email
+#   }
+#
+#   labels = {
+#     "cloudidentity.googleapis.com/groups.discussion_forum" = ""
+#   }
+# }
+#
+# resource "google_cloud_identity_group_membership" "session_exempt_members" {
+#   provider = google.billed
+#
+#   group = google_cloud_identity_group.session_exempt.id
+#
+#   preferred_member_key {
+#     id = var.workspace_account
+#   }
+#
+#   roles {
+#     name = "MEMBER"
+#   }
+# }
+#
+# # A Workspace super-admin has resourcemanager.organizationAdmin but NOT Access
+# # Context Manager rights, so creating the binding 403s without this grant.
+# # gcpAccessAdmin is the role carrying accesscontextmanager.gcpUserAccessBindings.*
+# # policyAdmin does NOT (it manages access policies and levels only). We burned a
+# # 403 loop on exactly that confusion.
+# resource "google_organization_iam_member" "acm_admin" {
+#   provider = google.billed
+#
+#   org_id = var.org_id
+#   role   = "roles/accesscontextmanager.gcpAccessAdmin"
+#   member = "user:${var.admin_account}"
+# }
+#
+# resource "google_access_context_manager_gcp_user_access_binding" "no_reauth" {
+#   provider = google.billed
+#
+#   organization_id = var.org_id
+#   group_key       = trimprefix(google_cloud_identity_group.session_exempt.id, "groups/")
+#
+#   session_settings {
+#     # enabled=false => infinite session => never reauth. The non-zero length
+#     # exists only to dodge the provider's zero-length+disabled 400. It is
+#     # disregarded because session_length_enabled is false. See the warning above.
+#     session_length         = "86400s"
+#     session_length_enabled = false
+#     session_reauth_method  = "LOGIN"
+#   }
+#
+#   depends_on = [google_organization_iam_member.acm_admin]
+# }
+#
+# Requires these APIs enabled on the quota project:
+#   cloudidentity.googleapis.com
+#   accesscontextmanager.googleapis.com
+#
+# CLOSE THE LOOP. A corrected .tf that was never applied is worse than nothing,
+# because it reads as done and the next agent trusts it. That is exactly how the
+# one real regression happened. The fix sat in git for 12 days without
+# an apply while the org silently ran the default 16h clock. `terraform plan`
+# must print "No changes" before this is called finished.

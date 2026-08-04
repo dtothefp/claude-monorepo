@@ -66,11 +66,42 @@ claude-monorepo/
 |-- LICENSE                  # MIT
 |-- .env.example             # Placeholder keys, all optional
 |
+|-- scripts/gws/             # Google Workspace multi-account CLI auth
+|-- terraform/gws-project/   # One GCP project per Google account
+|-- docs/                    # Long-form runbooks
+|
 |-- packages/                # Your projects go here, one repo each (gitignored)
 |-- research/                # The shared knowledge wiki
 |   |-- index.md             # Curated entry point
 |   |-- log.md               # Append-only changelog
 |-- decisions/               # Architecture decision records
+```
+
+## Google Workspace access
+
+Agents are much more useful when they can read your mail and write to your Drive.
+Getting there means driving several Google accounts from one machine, and then
+fighting the thing nobody warns you about: your tokens die every 16 hours with
+`invalid_grant: reauth related error (invalid_rapt)`.
+
+`scripts/gws/` is the multi-account wrapper around
+[`googleworkspace-cli`](https://github.com/googleworkspace/google-workspace-cli),
+with each account isolated in its own config dir and its own GCP project.
+`terraform/gws-project/` provisions that project.
+
+[docs/google-workspace-auth.md](docs/google-workspace-auth.md) is the part worth
+reading. It covers the Internal vs External consent screen decision (and why a
+project's org is fixed at creation), the reauth fix when you administer the domain
+(including the zero-length setting that locks everyone out instead), and the fix
+when you **do not** administer it, such as an employer's Workspace, where every
+admin lever is unavailable and the answer is to stop requesting a Google Cloud
+scope you never needed.
+
+```bash
+./scripts/gws/gws-install-binary.sh
+cp .gws-accounts.example.json .gws-accounts.json   # then edit
+./scripts/gws/gws-auth-setup.sh --account <alias>
+./scripts/gws/gws-check-scopes.sh <alias>          # what Google actually granted
 ```
 
 ## The pipeline (the point of this repo)
