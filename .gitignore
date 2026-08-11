@@ -27,6 +27,11 @@ graphify-out/
 *.wiki-index.db-wal
 *.wiki-index.db-shm
 
+# Private raw captures. The parent wiki is public, so a source that enumerates
+# private projects stays on disk and out of the repo while its synthesis ships.
+# The synthesis names it in sources_note so the gap is stated, not hidden.
+research/retrieval/ref/graphify-sqlite-embeddings-handoff-2026-08-11.md
+
 # Node / build
 node_modules/
 dist/

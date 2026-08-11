@@ -167,11 +167,19 @@ if [ -f "$GRAPH_JSON" ]; then
 import json, sys
 from collections import Counter
 g = json.load(open(sys.argv[1]))
-nodes, edges = g.get("nodes", []), g.get("edges", [])
+nodes = g.get("nodes", [])
+# Clustered output stores edges under "links", raw extraction under "edges".
+# Reading only "edges" silently reports zero on every clustered graph, which is
+# every graph this script builds. Same trap as loading with networkx's default
+# edges="edges", which yields an empty graph without erroring.
+edges = g.get("links") or g.get("edges", [])
 conf = Counter(e.get("confidence", "?") for e in edges)
 comms = {n.get("community") for n in nodes if n.get("community") is not None}
 print(f"{len(nodes)} nodes, {len(edges)} edges, {len(comms)} communities")
-print("  edges by provenance: " + ", ".join(f"{k} {v}" for k, v in conf.most_common()))
+if conf:
+    print("  edges by provenance: " + ", ".join(f"{k} {v}" for k, v in conf.most_common()))
+if g.get("built_at_commit"):
+    print(f"  built at commit: {g['built_at_commit'][:12]}")
 PY
     echo ""
     echo "  graph:  $CORPUS_ROOT/graphify-out/graph.json"

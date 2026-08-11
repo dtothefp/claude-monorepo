@@ -33,6 +33,8 @@ Rules:
 - `source:` (singular) on raw files, one origin each. `sources:` (a list) on synthesis files, pointing at `ref/` paths. This is a meaning distinction, not a style choice.
 - `index.md` links to synthesis files, never into `ref/` directly.
 - Supersession annotates the synthesis. The raw file is never touched, because superseding says which reading is current, not what the evidence said.
+- **Tier placement.** The parent `research/` is public and holds research about this workspace's own concepts: retrieval, the knowledge graph, semantic search, ingestion. Research about a client, employer, or private project goes in `packages/<name>/research/`, which the parent gitignores, even when the ideas are generic, because the parent is published and a reader should not learn what your private repos contain. See AGENTS.md for the full rule.
+- **Public conclusion, private source.** Keep the raw capture on disk, gitignore that one file, and state the gap in the synthesis's `sources_note`. Never edit a raw capture to make it publishable. Raw files are immutable, so it is publish whole or hold whole, and the synthesis has to stand alone without it.
 - New file means append one line to `log.md`, and update `index.md` if it changes a conclusion.
 - Never rewrite history. Add, supersede, don't delete.
 - Keep entries short. If one runs past a few paragraphs, split it.

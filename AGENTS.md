@@ -75,6 +75,20 @@ One wiki, one graph. A wiki inside `packages/<name>/` gets its graph inside that
 
 Semantic search over the same wiki (embeddings in SQLite, complementing the graph rather than replacing it) is planned but not built. See [docs/semantic-search-plan.md](docs/semantic-search-plan.md).
 
+### Daily routines (local)
+
+Two launchd jobs on this Mac, no cloud and no network:
+
+```bash
+./scripts/routines/install.sh install
+```
+
+`graphify-daily` at 03:15 rebuilds every graph that already exists. `wiki-embed-daily` at 03:45 reindexes semantic search, and no-ops with an explanation until the indexer exists. `install.sh status` shows whether they are loaded and when each last ran, `install.sh run <job>` triggers one in the foreground, and `install.sh uninstall` removes them.
+
+launchd rather than cron because a laptop asleep at 03:15 gets its job run on wake, where cron would silently skip it.
+
+The graph rebuild enforces three rules that each come from a real regression, documented at the top of `scripts/routines/graphify-daily.sh`: every build runs with cwd inside the project that owns the graph, first extractions are always manual, and a multi-path scope is never handled by looping per path.
+
 Type `/menu` any time for the full navigation cheat-sheet.
 
 ## Tool routing
@@ -130,6 +144,16 @@ Don't create ad-hoc folders (`tmp/`, `output/`, `data/`). Scratch files go in `c
 - `research/log.md`, an append-only changelog. One line per new artifact. A PostToolUse hook appends here automatically when a wiki file is written.
 
 The raw/synthesis split is the load-bearing rule: for any sentence in the wiki you should be able to tell whether a source said it or a model inferred it, just from which directory it lives in. Every ingest writes both files.
+
+### What belongs in the parent wiki, and what does not
+
+The parent `research/` is public. That is the point of it, not a constraint on it.
+
+**Research about this workspace's own concepts belongs here, at the top level, and ships publicly.** How retrieval works, how the knowledge graph is built, how semantic search should be designed, how ingestion is structured: these are the ideas this repo exists to demonstrate, and burying them in a gitignored package defeats the purpose. Implementations follow the same rule. A semantic-search skill, the scripts that drive it, and the research behind it are all public.
+
+**Research about a specific client, employer, or private project belongs in that project's package**, under `packages/<name>/research/`, which the parent gitignores. This is not about sensitivity alone. Material that maps a private repo, names internal tooling, or enumerates private projects goes in the package even when the ideas in it are generic, because the parent is a published artifact and a reader of it should never learn what is in your private repos.
+
+When a public conclusion rests on a private source, keep the raw capture on disk, gitignore that one file, and state the gap in the synthesis's `sources_note`. Never edit a raw capture to make it publishable: raw files are immutable, so the choice is publish it whole or hold it whole. The synthesis then has to stand on its own without the reader having the source, which is a fair price for the conclusion being public at all.
 
 Filename convention: `<topic>-YYYY-MM-DD.md`. Date in the file's frontmatter, not as a filename prefix. Full rules in [GOVERNANCE.md](GOVERNANCE.md).
 
