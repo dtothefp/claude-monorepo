@@ -6,7 +6,8 @@ set -euo pipefail
 # If account-alias is omitted, uses the "default" from .gws-accounts.json.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
+# Two levels up: this script lives in <root>/scripts/gws/.
+WORKSPACE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 REGISTRY="$WORKSPACE_DIR/.gws-accounts.json"
 
 if [ ! -f "$REGISTRY" ]; then
@@ -57,7 +58,7 @@ KEYRING_CRED="$GWS_CONFIG_DIR/credentials.enc"
 if [ ! -f "$KEYRING_CRED" ] && [ ! -f "$CRED_PATH" ]; then
     echo "Error: No credentials for account '$ACCOUNT'." >&2
     echo "Neither keyring ($KEYRING_CRED) nor export ($CRED_PATH) exists." >&2
-    echo "Run ./scripts/gws-auth-setup.sh $ACCOUNT to authenticate." >&2
+    echo "Run ./scripts/gws/gws-auth-setup.sh $ACCOUNT to authenticate." >&2
     exit 1
 fi
 
@@ -94,7 +95,7 @@ if [ -n "$CLIENT_SECRET_FILE" ]; then
     CS_DST="$GWS_CONFIG_DIR/client_secret.json"
     if [ ! -f "$CS_SRC" ]; then
         echo "Error: client_secret source not found at $CS_SRC for account '$ACCOUNT'." >&2
-        echo "Run ./scripts/gws-auth-setup.sh $ACCOUNT to capture it." >&2
+        echo "Run ./scripts/gws/gws-auth-setup.sh $ACCOUNT to capture it." >&2
         exit 1
     fi
     if ! cmp -s "$CS_SRC" "$CS_DST"; then

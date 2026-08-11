@@ -34,7 +34,10 @@ if [ -z "$PROMPT" ]; then
 fi
 
 # Override phrases. If any appear, stay out of the way.
-OVERRIDE_RE='fix this|review this|edit this|summarize in chat|don.?t save|don.?t ingest|just read|read only|no wiki|skip wiki'
+# NOTE (2026-08-06): "don.?t" matches "dont" and "don't" but NOT "do not",
+# so "do not save this" silently failed to suppress. Grouped alternation
+# now covers both spellings across the common verbs.
+OVERRIDE_RE='fix this|review this|edit this|summarize in chat|(don.?t|do not) (save|ingest|add|file)|just read|read only|no wiki|skip wiki'
 if printf '%s' "$PROMPT" | grep -qiE "$OVERRIDE_RE"; then
     echo '{}'
     exit 0
@@ -52,16 +55,30 @@ fi
 # will silently emit `{}` and the wiki-ingest skill will not be
 # suggested for that attach.
 #
-# The first real file attach via the `+` button will tell us whether
-# this assumption holds. If the hook misses, the backstop is the
-# "Auto wiki-ingest on file attach" rule in CLAUDE.md (parent repo
-# root) — Claude will still invoke wiki-ingest from the prose rule even
-# though the hook did not fire.
+# RESOLVED (2026-08-06): the first real attach happened and the assumption
+# did NOT hold, though not for the predicted reason. The file was not
+# inlined as a blob; it was expanded as an @-mention with the path in
+# DOUBLE QUOTES:
 #
-# If this regex needs to grow: the place to look is the input PAYLOAD
-# above (jq -r '.' on it during a real attach to see what shape Claude
-# Code actually emits) — do not guess at the schema.
-FILES=$(printf '%s' "$PROMPT" | grep -oE '(@|^|[[:space:]])((/|~/)[A-Za-z0-9._/-]+\.[A-Za-z0-9]+|@[A-Za-z0-9._/-]+)' 2>/dev/null | sed 's/^[[:space:]]*//; s/^@//' | sort -u || true)
+#     @"/Users/dfp/Downloads/personal-fiserv-kb-export.zip"
+#
+# The old regex allowed `@` followed immediately by `/` or `~`, so the
+# opening quote broke the match and the hook emitted {} silently. Every
+# other form (bare path, unquoted @path, tilde path) worked fine, which
+# is why this went unnoticed: it failed only on the exact shape the UI
+# actually produces. The prose backstop in CLAUDE.md did NOT save it
+# either; the attach was handled because the user asked about the file
+# directly, not because anything auto-fired.
+#
+# `@"?` on both branches fixes it, and the sed strips the leading quote.
+# The trailing quote is excluded naturally since `"` is not in the path
+# charset.
+#
+# If this regex needs to grow again: dump the input PAYLOAD (jq -r '.')
+# during a real attach to see what shape Claude Code actually emits. Do
+# not guess at the schema, and add a case to the test block in
+# hooks/README.md rather than testing by hand.
+FILES=$(printf '%s' "$PROMPT" | grep -oE '(@"?|^|[[:space:]])((/|~/)[A-Za-z0-9._/-]+\.[A-Za-z0-9]+|@"?[A-Za-z0-9._/-]+)' 2>/dev/null | sed 's/^[[:space:]]*//; s/^@//; s/^"//' | sort -u || true)
 
 if [ -z "$FILES" ]; then
     echo '{}'

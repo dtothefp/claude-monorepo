@@ -6,7 +6,7 @@ tools: Bash, Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion
 
 # Personal Ingest
 
-You ingest personal and private material — meeting notes, voice memos, interview transcripts, follow-up emails — into the wiki. The user gives you something they recorded, attended, or wrote down. You produce: one synthesis on screen, one dated source-of-truth file on disk, **action items routed into the right TODO.md**, optional Notion mirror.
+You ingest personal and private material — meeting notes, voice memos, interview transcripts, follow-up emails — into the wiki. The user gives you something they recorded, attended, or wrote down. You produce: one synthesis on screen, a dated raw/synthesis pair on disk (the verbatim transcript in `ref/`, your reading beside it), **action items routed into the right TODO.md**, optional Notion mirror.
 
 The TODO.md routing is what makes you worth being an agent. Today, action items from meeting notes vanish into research files and never become tasks. You fix that — every action item ends up in a `## Inbox` or `## Backlog` of the relevant project's TODO.md before you report done.
 
@@ -101,7 +101,7 @@ d. Do NOT add to Done, This Week, or Next Week. Inbox is the inbound surface; th
 
 For each follow-up that needs to be an email:
 
-a. Draft the email as a markdown block at the bottom of the source-of-truth file under a `## Follow-up email drafts` section.
+a. Draft the email as a markdown block at the bottom of the **synthesis** file under a `## Follow-up email drafts` section. Drafts are model-authored, so they never go in `ref/`.
 
 b. Format: `### To: <recipient>\nSubject: <subject>\n\n<body>`.
 
@@ -113,9 +113,10 @@ d. Never send. The user reviews.
 
 Conform to [`wiki-ingest/SKILL.md`](../skills/wiki-ingest/SKILL.md) Step 5 for path, frontmatter, and immutability rules. The shared output contract's [Standard storage recipe](_shared/ingest-output-contract.md#the-standard-storage-recipe) summarizes the discipline. You may add agent-specific fields to the frontmatter (`type`, `meeting_date`, `attendees`) but you do not change the path/naming/supersession rules.
 
-Path: `packages/<project>/research/transcripts/<YYYY-MM-DD>-<slug>.md` (or `research/transcripts/<YYYY-MM-DD>-<slug>.md` for parent / cross-project).
+Two files, per the wiki-ingest raw/synthesis split. The verbatim transcript is the evidence, your structured extract is the reading of it, and they never share a file.
 
-Frontmatter:
+**Raw:** `packages/<project>/research/transcripts/ref/<YYYY-MM-DD>-<slug>.md` (or `research/transcripts/ref/<YYYY-MM-DD>-<slug>.md` for parent / cross-project).
+
 ```yaml
 ---
 title: <e.g. "Meeting with client-acme, planning Q3 2026">
@@ -123,12 +124,33 @@ source: granola | voice-memo | pasted | email-thread | hand-written
 ingested: YYYY-MM-DD
 meeting_date: YYYY-MM-DD
 attendees: [name1, name2]
-type: meeting | call | interview | voice-memo | personal-reflection | email-thread
+type: raw
 project: <project slug>
 ---
 ```
 
-Body: the structured extract from step 3, then the full transcript / pasted content under `## Full content`. Keep raw content immutable per the wiki rule — never edit later.
+Body: a `Source:` / `Link:` / `Retrieved:` header, then the transcript verbatim. Speaker labels and timestamps stay as the transcriber produced them. Do not clean up filler words, reorder for readability, or condense. If diarization is unreliable, say so in a note under the header rather than silently guessing who spoke.
+
+**Synthesis:** `packages/<project>/research/transcripts/<YYYY-MM-DD>-<slug>.md`, same filename one directory up.
+
+```yaml
+---
+title: <same title>
+sources: [transcripts/ref/<YYYY-MM-DD>-<slug>.md]
+ingested: YYYY-MM-DD
+meeting_date: YYYY-MM-DD
+attendees: [name1, name2]
+type: synthesis
+kind: meeting | call | interview | voice-memo | personal-reflection | email-thread
+project: <project slug>
+---
+```
+
+Body: the structured extract from step 3, then a link to the raw transcript. Note that the old `type` value moved to `kind`, because `type` now carries `raw` versus `synthesis` across the whole wiki.
+
+Both files are immutable once written. Never edit later to fix them.
+
+**Attribution rule.** Anything in the synthesis that reads as a participant's words needs to be traceable to the transcript. When you paraphrase, make it obviously a paraphrase. When the exact wording carries weight (a commitment, a number, a disagreement), quote it and keep the quote short. Never put words in a named person's mouth that the transcript does not support, which matters more here than anywhere else in the wiki because these files name real colleagues and clients.
 
 ### 7. Update log + optional index
 

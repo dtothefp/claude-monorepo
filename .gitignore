@@ -21,6 +21,12 @@ context/
 # Knowledge-graph build output (regenerates from research/)
 graphify-out/
 
+# Semantic search index (see docs/semantic-search-plan.md). A build artifact,
+# and one that would carry package-wiki content into this public repo.
+*.wiki-index.db
+*.wiki-index.db-wal
+*.wiki-index.db-shm
+
 # Node / build
 node_modules/
 dist/

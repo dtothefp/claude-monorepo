@@ -19,7 +19,8 @@ set -uo pipefail
 export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
+# Two levels up: this script lives in <root>/scripts/gws/.
+WORKSPACE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 LOG_FILE="${GWS_HEALTHCHECK_LOG:-$HOME/Library/Logs/gws-healthcheck.log}"
 
 # --- Slack alert destination ------------------------------------------------

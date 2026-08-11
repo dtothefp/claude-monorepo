@@ -17,7 +17,8 @@ set -euo pipefail
 #   .gitignore                ensures .credentials/, .gws-accounts.json, .bin/ are ignored
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
+# Two levels up: this script lives in <root>/scripts/gws/.
+WORKSPACE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 REGISTRY="$WORKSPACE_DIR/.gws-accounts.json"
 
 GWS_GITIGNORE_ENTRIES=(
@@ -202,9 +203,14 @@ for PROJECT in $ALL_PROJECTS; do
     fi
 
     # 4. Copy gws-multi.sh wrapper (always overwrite, parent is the source of truth)
-    mkdir -p "$PROJECT_DIR/scripts"
-    cp "$WORKSPACE_DIR/scripts/gws-multi.sh" "$PROJECT_DIR/scripts/gws-multi.sh"
-    chmod +x "$PROJECT_DIR/scripts/gws-multi.sh"
+    #
+    # The child copy must sit at the same depth as the parent's, i.e. in
+    # scripts/gws/, because the wrapper resolves its registry two levels up from
+    # itself. One level shallower and it reads the registry of whatever directory
+    # contains the project.
+    mkdir -p "$PROJECT_DIR/scripts/gws"
+    cp "$WORKSPACE_DIR/scripts/gws/gws-multi.sh" "$PROJECT_DIR/scripts/gws/gws-multi.sh"
+    chmod +x "$PROJECT_DIR/scripts/gws/gws-multi.sh"
     echo "    + gws-multi.sh wrapper"
 
     # 5. Copy gws skill (always overwrite, parent is the source of truth)

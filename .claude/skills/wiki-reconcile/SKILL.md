@@ -2,11 +2,12 @@
 
 ## Description
 
-Reconciles a `research/` directory against the Karpathy wiki pattern (raw
-sources / curated `index.md` / append-only `log.md`). Scaffolds missing
-wiki files, backfills `log.md` entries for files the auto-append hook
-never saw, and prompts the user to update topic conclusions in `index.md`
-when new material has shifted the picture.
+Reconciles a `research/` directory against the Karpathy wiki pattern
+(raw sources in `ref/` / model-authored synthesis / curated `index.md` /
+append-only `log.md`). Scaffolds missing wiki files, migrates pre-split
+files into raw and synthesis pairs, backfills `log.md` entries for files
+the auto-append hook never saw, and prompts the user to update topic
+conclusions in `index.md` when new material has shifted the picture.
 
 Use this whenever a `research/` tree drifts from the wiki pattern: brand
 new child project that was created before the hook landed, a research
@@ -87,6 +88,42 @@ content files like `.txt`, `.pdf`) excluding:
 
 For each file, capture: relative path, basename, last-modified date,
 and (for markdown) the first H1 or frontmatter `title` if present.
+
+### Step 3b: Migrate pre-split files (interactive, never batch)
+
+Files written before the raw/synthesis split are single files holding
+both layers, usually as `## Summary` plus `## Full content`. Reconcile
+can split them, but this is the one operation in this skill that
+requires judgment on every file, so it is never done in bulk.
+
+Detect candidates: any `*.md` outside a `ref/` directory that has no
+`sources:` in frontmatter AND either contains a `## Full content`
+heading or is over ~400 words.
+
+For each candidate, one at a time:
+
+1. Read the whole file. Decide whether it has a **clean seam**, meaning
+   the raw material sits under its own heading and the model-authored
+   prose sits elsewhere, with no interleaving.
+2. If the seam is clean: propose the split, showing the user which
+   sections go to `ref/<same-filename>.md` and which stay in the
+   synthesis, plus the frontmatter each file will carry. Wait for
+   confirmation before writing.
+3. If the seam is not clean, which is common for meeting notes and
+   transcripts where quotes and paraphrase alternate, **stop and say
+   so**. Do not guess. Offer the user three options: leave the file
+   as-is and mark it `type: legacy` in frontmatter, split it by hand
+   together, or re-ingest from the original source if it still exists.
+4. Never delete the original until the pair is written and the user has
+   confirmed the split reads correctly.
+
+The failure mode to avoid: a model deciding which sentences were
+evidence and which were its own inference, getting it subtly wrong, and
+producing a `ref/` file that now carries fabricated authority. A file
+left honestly unsplit is strictly better than a pair split wrong.
+
+For client or NDA material, always walk file by file with the user. Do
+not offer a batch option at all.
 
 ### Step 4: Backfill log.md
 

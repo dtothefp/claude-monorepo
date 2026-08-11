@@ -63,6 +63,18 @@ All ingest agents call the `wiki-ingest` skill internally. Every ingest produces
 
 `/graphify <path>` turns a folder of research into a navigable knowledge graph (interactive HTML + GraphRAG-ready JSON + a plain-language report). Point it at `research/` to build cross-document entity links the index alone never captures. The retrieval skills are graph-first when a graph exists and fall back to the index plus a freshness check otherwise.
 
+Two ways to run it, same pipeline underneath:
+
+```bash
+./scripts/graph-refresh.sh packages/artium/research
+```
+
+`/graphify` in a session drives it through subagents and needs no API key. `scripts/graph-refresh.sh` is the unattended path for a cron job or a post-ingest sweep, and needs either the standalone `claude` CLI or a provider key. Pass `--check` to ask whether a rebuild is pending without doing any work. Output lands in `<corpus-root>/graphify-out/`, which is gitignored: the graph is a build artifact and regenerates from `research/`.
+
+One wiki, one graph. A wiki inside `packages/<name>/` gets its graph inside that package, so gitignored material stays gitignored.
+
+Semantic search over the same wiki (embeddings in SQLite, complementing the graph rather than replacing it) is planned but not built. See [docs/semantic-search-plan.md](docs/semantic-search-plan.md).
+
 Type `/menu` any time for the full navigation cheat-sheet.
 
 ## Tool routing
@@ -110,11 +122,14 @@ Don't create ad-hoc folders (`tmp/`, `output/`, `data/`). Scratch files go in `c
 
 ## Research wiki (Karpathy pattern)
 
-`research/` is the shared knowledge layer. Three parts:
+`research/` is the shared knowledge layer. Four parts:
 
-- Raw notes and sources in topic subdirs, never edited once written. Add new dated files instead.
+- Raw sources in `research/<topic>/ref/`. What the source actually said, never LLM-authored, never edited once written. Add new dated files instead.
+- Synthesis in `research/<topic>/`, one level up. Model-authored readings that cite the `ref/` files they rest on via `sources:` frontmatter.
 - `research/index.md`, the curated entry point. Update when a conclusion changes.
 - `research/log.md`, an append-only changelog. One line per new artifact. A PostToolUse hook appends here automatically when a wiki file is written.
+
+The raw/synthesis split is the load-bearing rule: for any sentence in the wiki you should be able to tell whether a source said it or a model inferred it, just from which directory it lives in. Every ingest writes both files.
 
 Filename convention: `<topic>-YYYY-MM-DD.md`. Date in the file's frontmatter, not as a filename prefix. Full rules in [GOVERNANCE.md](GOVERNANCE.md).
 

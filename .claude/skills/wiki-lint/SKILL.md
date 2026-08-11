@@ -79,6 +79,52 @@ split into a sub-topic with its own index.md`.
 Skip the file's own intro / "What lives here" sections — only count
 topic sections.
 
+#### 2d-bis. Provenance split violations
+
+The raw/synthesis split (GOVERNANCE.md, wiki-ingest Step 5) rots
+silently if nothing checks it, because a broken pair still reads fine.
+Four checks, in descending severity:
+
+**Orphan synthesis (error).** For each `*.md` outside a `ref/` directory,
+read its frontmatter. If `sources:` is missing or empty, flag it. Skip
+files that are structure rather than research: `index.md`, `log.md`,
+`CLAUDE.md`, `AGENTS.md`, `README.md`. Those describe the wiki rather
+than making claims about the world, so they have nothing to cite. This means a model wrote something with no
+evidence behind it, which is the exact failure the split exists to
+prevent. Report as `no sources: <path>`.
+
+**Dangling reference (error).** For each path listed in a synthesis
+file's `sources:`, check the file exists. Flag any that do not resolve.
+Report as `sources: points at missing <path>`.
+
+**Orphan raw (warning).** For each file under a `ref/` directory, grep
+every synthesis file's `sources:` for its path. If nothing cites it, the
+evidence landed but no one read it. Report as `uncited ref`. This is a
+weaker signal than the other three, since a deliberate raw-only capture
+is legitimate.
+
+**Suspected model prose in `ref/` (warning, heuristic).** Read the first
+40 lines of each `ref/` file. Flag it if the `Source:` / `Link:` /
+`Retrieved:` header is missing entirely, or if the body contains
+headings like `## Summary`, `## Key takeaways`, `## Analysis`, or
+`## What this means`. These are synthesis section names and should never
+appear in a raw capture. Say explicitly in the digest that this one is a
+heuristic and needs a human to confirm, since a source document can
+legitimately contain its own summary section.
+
+**Uncaptured external sources (warning).** For each synthesis file, check whether
+any entry in `sources:` is a bare external URL or a description of a live system
+(a Slack channel, an MCP call, "screenshots") rather than a path to a local
+`ref/` file. Flag those as `cited but never captured`. This is the signature of
+research that was delegated to a subagent told not to write files, and it means
+the claim cannot be re-verified from the repo. Report the count per wiki, since
+one is a judgement call and a dozen is a process failure.
+
+Also check frontmatter key discipline while reading: `source` (singular)
+belongs only on `ref/` files, `sources` (plural list) only on synthesis
+files. Flag files carrying the wrong one, or both, as `frontmatter key
+mismatch`.
+
 #### 2e. Missing wiki bookkeeping
 
 If `research/index.md` or `research/log.md` is missing, flag it and
@@ -107,6 +153,13 @@ Summary: N wikis audited, M with findings.
 ## <project-name>
 
 **Findings: N**
+
+### Provenance split (N errors, M warnings)
+- ERROR `research/<topic>/file.md`: no `sources:`, nothing backs this
+- ERROR `research/<topic>/other.md`: `sources:` points at missing `ref/gone.md`
+- WARN `research/<topic>/ref/thing.md`: uncited by any synthesis
+- WARN `research/<topic>/ref/thing.md`: has `## Summary`, possible model prose (heuristic, verify by hand)
+- WARN `research/<topic>/file.md`: has `source:`, synthesis files take `sources:`
 
 ### Unreferenced files (N)
 - `research/<topic>/file.md` — last modified YYYY-MM-DD

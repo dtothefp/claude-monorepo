@@ -28,15 +28,16 @@ set -euo pipefail
 #     registry, so it works for child projects too, not just the parent.
 #
 # Examples:
-#   ./scripts/gws-auth-setup.sh                          # all accounts, parent
-#   ./scripts/gws-auth-setup.sh personal                 # just personal, parent
-#   ./scripts/gws-auth-setup.sh packages/my-app          # all accounts, child
-#   ./scripts/gws-auth-setup.sh packages/my-app work     # just `work` in child
-#   ./scripts/gws-auth-setup.sh packages/my-app --account work   # same, explicit
-#   ./scripts/gws-auth-setup.sh --client-id ID --client-secret SECRET
+#   ./scripts/gws/gws-auth-setup.sh                          # all accounts, parent
+#   ./scripts/gws/gws-auth-setup.sh personal                 # just personal, parent
+#   ./scripts/gws/gws-auth-setup.sh packages/my-app          # all accounts, child
+#   ./scripts/gws/gws-auth-setup.sh packages/my-app work     # just `work` in child
+#   ./scripts/gws/gws-auth-setup.sh packages/my-app --account work   # same, explicit
+#   ./scripts/gws/gws-auth-setup.sh --client-id ID --client-secret SECRET
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEFAULT_DIR="$(dirname "$SCRIPT_DIR")"
+# Two levels up: this script lives in <root>/scripts/gws/.
+DEFAULT_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 CLIENT_ID=""
 CLIENT_SECRET=""
@@ -319,5 +320,5 @@ echo "=== Auth setup complete ==="
 echo ""
 echo "Verify with:"
 for ACCOUNT in $ACCOUNTS; do
-    echo "  ./scripts/gws-multi.sh $ACCOUNT oauth2 userinfo.get"
+    echo "  ./scripts/gws/gws-multi.sh $ACCOUNT oauth2 userinfo.get"
 done

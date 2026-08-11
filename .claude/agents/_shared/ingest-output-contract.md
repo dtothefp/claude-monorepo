@@ -44,7 +44,7 @@ Suggested next:
 
 ## What goes in Captured
 
-- The **dated source-of-truth file** (always — every ingest produces at least one immutable dated file under `research/<topic>/` or a project's `research/`)
+- The **dated synthesis file** and its **`ref/` raw capture**. Always both, as two separate bullets, so the user can see the evidence layer actually landed.
 - The **asset folder** if media was downloaded (videos, images, audio clips). One bullet per folder, not per file.
 - Any **`log.md` / `index.md` updates** that happened (one bullet per update)
 - Any **memory pointer** drafted (path + memory file name)
@@ -108,6 +108,10 @@ Every ingest agent's `Do not` section MUST include these:
 - Do not skip the Notion mirror. Call `notion-publisher` before reporting done. If skipping is the right call, say so explicitly in Notion: footer.
 - Do not duplicate the source-of-truth markdown content into the on-screen reply. The user has the file path; the reply is the synthesis ABOUT it.
 - Do not invent file paths. Every path in Captured must exist.
+- Do not write model-authored prose into a `ref/` file. Summaries, framing, and interpretation belong in the synthesis. A `ref/` file holds only what the source said.
+- Do not tell a research subagent to avoid writing files when it will fetch primary sources. That instruction destroys the evidence at the only point where anything touched it. Subagents capture to `ref/` as they go and return paths alongside their synthesis. See [`wiki-ingest/SKILL.md`](../../skills/wiki-ingest/SKILL.md) Step 5c.
+- Do not accept a subagent's report as a raw capture. It is model-authored by definition, however faithful it reads.
+- Do not write a synthesis with an empty or missing `sources:` list. That is a model asserting something with no evidence behind it, and `wiki-lint` treats it as an error.
 
 ## The standard storage recipe
 
@@ -115,9 +119,10 @@ In addition to the on-screen contract, every ingest agent writes the same shape 
 
 The canonical reference is [`.claude/skills/wiki-ingest/SKILL.md`](../../skills/wiki-ingest/SKILL.md). Specifically:
 
+- **The raw/synthesis split** (its Step 5, the core rule): every ingest writes **two** files, not one. The raw capture goes to `research/<topic>/ref/<YYYY-MM-DD>-<slug>.md` and is **never LLM-authored**. The synthesis goes to `research/<topic>/<YYYY-MM-DD>-<slug>.md` and cites the raw file in its `sources:` list. Same filename, different directory. An ingest that produces only a synthesis is incomplete.
 - **File path + naming** (its Step 5): `research/<topic>/<YYYY-MM-DD>-<slug>.md`. Date is the ingest date, NOT the source's publish date. Slug is kebab-case 3-6 words.
-- **Frontmatter shape** (its Step 5): `title`, `source`, `ingested`, optional `author` / `published` / `topics`. Plus any agent-specific fields (e.g. `attendees` for personal-ingest, `deep_decoded_reels` for social-ingest).
-- **Immutability** (its rule throughout): the raw source file is never edited later. If the source updates, ingest a new dated file and mark the old one with `**Superseded by:** <link>` (its Step 7).
+- **Frontmatter shape** (its Step 5): raw files carry `title`, `source` (singular, one origin), `ingested`, `type: raw`, optional `author` / `published`. Synthesis files carry `title`, `sources` (plural list, pointing at `ref/` paths), `ingested`, `type: synthesis`, optional `topics`. `source` versus `sources` is a meaning distinction, not a style choice. Plus any agent-specific fields (e.g. `attendees` for personal-ingest, `deep_decoded_reels` for social-ingest).
+- **Immutability** (its rule throughout): the raw source file is never edited later, not even to add a supersession banner. If the source updates, ingest a new dated pair and mark the old **synthesis** with `**Superseded by:** <link>` (its Step 7).
 - **Log hook** (its Step 8): the `research-log-append.sh` PostToolUse hook auto-fires when files under `research/` are written. Verify after writing; only manually append if the hook didn't fire.
 - **Topic index update** (its Step 6): only when the new source shifts a conclusion. Adding to a topic's "Sources" list is fine without a conclusion change.
 
@@ -125,7 +130,7 @@ Ingest agents don't bypass `wiki-ingest`; they either invoke it as a skill (the 
 
 Beyond the file write itself:
 
-1. **Source-of-truth file** — per wiki-ingest discipline above.
+1. **Source-of-truth pair**, the `ref/` raw capture plus the synthesis that cites it, per wiki-ingest discipline above. Both, every time.
 2. **Asset folder** (if media was captured) — `research/<topic>/<YYYY-MM-DD>-<slug>/` next to the source-of-truth file. wiki-ingest does not handle this; the calling agent does.
 3. **`log.md` append** — handled by hook + verification per wiki-ingest Step 8.
 4. **`index.md` update** — per wiki-ingest Step 6.
@@ -139,7 +144,7 @@ Every ingest agent ends its pipeline with a delegation:
 ```
 After writing the source-of-truth file and updating log/index, call the
 notion-publisher agent with:
-- source_path: absolute path to the dated markdown file
+- source_path: absolute path to the dated **synthesis** file, never the `ref/` capture. Notion gets the reading, not the raw evidence, and mirroring a `ref/` file would also push unreviewed source text to a second system.
 - project: the project slug (or "parent" for parent-workspace research)
 - title: the human-readable Notion page title
 - summary: the same synthesis you put in the on-screen reply (notion-publisher

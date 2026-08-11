@@ -25,7 +25,8 @@ set -euo pipefail
 # it is correct for the domains we administer.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
+# Two levels up: this script lives in <root>/scripts/gws/.
+WORKSPACE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 ACCOUNTS_ARGV=()
 while [ $# -gt 0 ]; do
@@ -128,7 +129,7 @@ PYEOF
             echo "             Fine on a domain you administer with the reauth policy disabled."
             echo "             On a domain you do NOT administer this is the invalid_rapt cause."
             echo "             Fix: set \"scopes\": \"workspace-no-cloud\" in .gws-accounts.json,"
-            echo "             then ./scripts/gws-auth-setup.sh --account $ACCOUNT"
+            echo "             then ./scripts/gws/gws-auth-setup.sh --account $ACCOUNT"
             ;;
         *)
             echo "    $STATUS"

@@ -9,14 +9,15 @@ set -euo pipefail
 # Defaults to the parent of the scripts/ directory.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR="${1:-$(dirname "$SCRIPT_DIR")}"
+# Two levels up: this script lives in <root>/scripts/gws/.
+WORKSPACE_DIR="${1:-$(dirname "$(dirname "$SCRIPT_DIR")")}"
 REGISTRY="$WORKSPACE_DIR/.gws-accounts.json"
 # Use the target workspace's own wrapper when it has one. gws-multi.sh resolves
 # its registry relative to its own location, so probing a child project's
 # accounts through the parent wrapper silently checks the wrong registry
 # (this is how one account's expired token went undetected for weeks).
-if [ -x "$WORKSPACE_DIR/scripts/gws-multi.sh" ]; then
-    WRAPPER="$WORKSPACE_DIR/scripts/gws-multi.sh"
+if [ -x "$WORKSPACE_DIR/scripts/gws/gws-multi.sh" ]; then
+    WRAPPER="$WORKSPACE_DIR/scripts/gws/gws-multi.sh"
 else
     WRAPPER="$SCRIPT_DIR/gws-multi.sh"
 fi
@@ -77,6 +78,6 @@ echo "Results: $((TOTAL - FAILED))/$TOTAL accounts healthy"
 if [ "$FAILED" -gt 0 ]; then
     echo ""
     echo "To fix failed accounts, run from the parent workspace:"
-    echo "  ./scripts/gws-auth-setup.sh $WORKSPACE_DIR"
+    echo "  ./scripts/gws/gws-auth-setup.sh $WORKSPACE_DIR"
     exit 1
 fi

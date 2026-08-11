@@ -12,7 +12,8 @@ set -euo pipefail
 #   gws-install-binary.sh --all --version 0.23.0    # both flags
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WORKSPACE_DIR="$(dirname "$SCRIPT_DIR")"
+# Two levels up: this script lives in <root>/scripts/gws/.
+WORKSPACE_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
 GWS_VERSION="0.22.5"
 TARGETS=()

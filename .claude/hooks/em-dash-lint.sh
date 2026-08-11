@@ -32,6 +32,15 @@ case "$file_path" in
   */.claude/projects/*/memory/*) exit 0 ;;
 esac
 
+# Skip raw captures. Files under a ref/ directory are verbatim source material,
+# never Claude-authored (see GOVERNANCE.md, wiki-ingest SKILL.md Step 5).
+# Rewriting a source's punctuation to satisfy a house style rule would corrupt
+# the evidence layer, which is the one thing the raw/synthesis split exists to
+# protect. The rule is about copy Claude writes, not about what a source said.
+case "$file_path" in
+  */ref/*) exit 0 ;;
+esac
+
 # Check for em dash (—, U+2014) or en dash (–, U+2013)
 if echo "$content" | grep -qP '[\x{2013}\x{2014}]' 2>/dev/null || \
    echo "$content" | grep -q $'—\|–'; then
