@@ -77,15 +77,17 @@ Semantic search over the same wiki (embeddings in SQLite, complementing the grap
 
 ### Daily routines (local)
 
-Two launchd jobs on this Mac, no cloud and no network:
+Two jobs, both running on this machine against this working copy. Nothing runs in the cloud, because a cloud runner cannot rebuild a graph that lives on your laptop's disk.
 
-```bash
-./scripts/routines/install.sh install
-```
+`graphify-daily` rebuilds every graph that already exists. `wiki-embed-daily` runs 25 minutes later and reindexes semantic search, no-opping with an explanation until the indexer exists. The gap is deliberate: the indexer joins chunks back to graph node ids, so it wants a current graph.
 
-`graphify-daily` at 03:15 rebuilds every graph that already exists. `wiki-embed-daily` at 03:45 reindexes semantic search, and no-ops with an explanation until the indexer exists. `install.sh status` shows whether they are loaded and when each last ran, `install.sh run <job>` triggers one in the foreground, and `install.sh uninstall` removes them.
+The logic lives in `scripts/routines/*.sh` and those scripts are the source of truth. Whatever schedules them just calls them, so the two schedulers below never diverge in behavior.
 
-launchd rather than cron because a laptop asleep at 03:15 gets its job run on wake, where cron would silently skip it.
+**Claude scheduled tasks (the current scheduler).** Visible and manageable in the app's Scheduled section, defined in `~/.claude/scheduled-tasks/<id>/SKILL.md`. Each run is an agent, so it reports results in prose and can flag anything odd. It runs only while the app is open; if the app is closed when a task is due it runs on next launch, which for a daily rebuild is fine and arguably better, since it lands when you sit down.
+
+**launchd (installed but unloaded).** `./scripts/routines/install.sh` writes and loads user agents that fire at a fixed time whether or not the app is running. Use this instead if you want the rebuild guaranteed at 03:15 on a machine that is awake, or if you stop using the app. `install.sh status` reports loaded state and last run, `install.sh run <job>` triggers one in the foreground, `install.sh uninstall` removes them.
+
+**Run one or the other, not both**, or every rebuild happens twice.
 
 The graph rebuild enforces three rules that each come from a real regression, documented at the top of `scripts/routines/graphify-daily.sh`: every build runs with cwd inside the project that owns the graph, first extractions are always manual, and a multi-path scope is never handled by looping per path.
 
