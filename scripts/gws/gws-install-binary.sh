@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Downloads the gws Linux arm64 binary from GitHub releases and installs it
-# into .bin/gws for one or more target directories (for Cowork VM usage).
+# into .bin/gws for one or more target directories (for Claude Code VM usage).
 #
 # Usage:
 #   gws-install-binary.sh                          # install to parent workspace only
@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
         --help|-h)
             echo "Usage: gws-install-binary.sh [OPTIONS] [target-dir...]"
             echo ""
-            echo "Downloads the gws Linux arm64 binary into .bin/gws for Cowork VM usage."
+            echo "Downloads the gws Linux arm64 binary into .bin/gws for Claude Code VM usage."
             echo ""
             echo "Options:"
             echo "  --all              Install to parent workspace + all child projects"
@@ -87,7 +87,7 @@ PLATFORM="linux"
 ARCH="arm64"
 echo "=== gws Binary Installer ==="
 echo "Version: $GWS_VERSION"
-echo "Platform: ${PLATFORM}-${ARCH} (Cowork VM)"
+echo "Platform: ${PLATFORM}-${ARCH} (Claude Code VM)"
 echo "Targets: ${#TARGETS[@]} directories"
 echo ""
 

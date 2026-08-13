@@ -2,20 +2,20 @@
 name: newsletter-digest
 description: >
   Fetch the user's tech newsletter emails from Gmail and extract everything related to
-  Claude and Claude Cowork into a weekly markdown digest. Use this skill whenever the user
-  asks to summarize their newsletters for Claude/Cowork news, catch up on Claude updates
-  from their email, or produce a weekly Cowork newsletter digest. Also trigger when the
+  Claude Code into a weekly markdown digest. Use this skill whenever the user
+  asks to summarize their newsletters for Claude Code news, catch up on Claude updates
+  from their email, or produce a weekly Claude Code newsletter digest. Also trigger when the
   user says 'summarize my newsletters', 'what did my newsletters say about Claude',
-  'newsletter digest', 'catch me up on Cowork from my emails', 'weekly newsletter summary',
+  'newsletter digest', 'catch me up on Claude Code from my emails', 'weekly newsletter summary',
   or 'what did I miss about Claude in my newsletters'. Trigger even for casual requests
-  like 'digest my email newsletters' or 'any Cowork stuff in my newsletters this week'.
+  like 'digest my email newsletters' or 'any Claude Code stuff in my newsletters this week'.
 ---
 
-# Newsletter Digest — Claude & Cowork Focus
+# Newsletter Digest — Claude & Claude Code Focus
 
-Extract Claude, Cowork, Claude Code, and Anthropic news from the user's tech newsletter
+Extract Claude, Claude Code, Claude Code, and Anthropic news from the user's tech newsletter
 emails into a single focused weekly digest. The user is a senior engineer and AI consultant
-evaluating Cowork for client recommendations — this digest feeds directly into that work.
+evaluating Claude Code for client recommendations — this digest feeds directly into that work.
 
 ## Gmail Account
 
@@ -50,9 +50,9 @@ If a newsletter returns zero results, note "No issues received" in the output.
 
 1. **Fetch** — run all source searches with the date filter, note which return results
 2. **Read** — fetch full message body for each result
-3. **Filter** — keep only content mentioning Claude, Cowork, Claude Code, Anthropic, or direct competitive comparisons (Claude vs GPT/Gemini). Drop everything else.
+3. **Filter** — keep only content mentioning Claude, Claude Code, Claude Code, Anthropic, or direct competitive comparisons (Claude vs GPT/Gemini). Drop everything else.
 4. **Deduplicate** — if multiple newsletters covered the same story, mention it once and note all sources
-5. **Flag capabilities** — identify anything that represents a new or changed capability in Claude/Cowork
+5. **Flag capabilities** — identify anything that represents a new or changed capability in Claude Code
 6. **Write** — compose the digest using the template below
 
 For daily newsletters like TLDR (7 issues/week), scan all issues but extract only
@@ -63,21 +63,21 @@ Claude-relevant mentions — don't read every word.
 Save to `research/YYYY-MM-DD_newsletters.md`. Don't overwrite existing files for the same date.
 
 ```markdown
-# Claude & Cowork Newsletter Digest — YYYY-MM-DD
+# Claude & Claude Code Newsletter Digest — YYYY-MM-DD
 
 **Period:** YYYY-MM-DD to YYYY-MM-DD
 **Scanned:** [all newsletter names — mark which had Claude content, which had none]
 
 ## TL;DR
-<!-- 2-3 sentences max. The #1 Claude/Cowork development and why it matters. Write last. -->
+<!-- 2-3 sentences max. The #1 Claude Code development and why it matters. Write last. -->
 
 ## Claude & Anthropic Updates
 <!-- Model releases, API changes, company news. Per item: what, source + date, why it matters.
      Keep each item to 1-2 sentences. -->
 
-## Cowork & Claude Code Developments
+## Claude Code & Claude Code Developments
 <!-- New features, workflow changes, capability additions.
-     If nothing: "No Cowork/Claude Code developments this week." -->
+     If nothing: "No Claude Code/Claude Code developments this week." -->
 
 ## Competitive Landscape
 <!-- How newsletters framed Claude vs competitors. Benchmarks, feature comparisons.
@@ -88,7 +88,7 @@ Save to `research/YYYY-MM-DD_newsletters.md`. Don't overwrite existing files for
      Format: "- **[Capability]**: [What it enables] — [Consulting implication]"
      If nothing: "No new capabilities flagged." -->
 
-## Cowork vs Claude Code Boundary
+## Claude Code vs Claude Code Boundary
 <!-- Anything that shifts the decision boundary between these tools.
      If nothing: "No boundary changes noted." -->
 
@@ -100,7 +100,7 @@ Save to `research/YYYY-MM-DD_newsletters.md`. Don't overwrite existing files for
 ## Guidelines
 
 - **800 words max.** A quiet week can be 150 words. Don't pad.
-- **Claude-only filter.** This is not a general tech digest. If a story doesn't touch Claude, Cowork, Anthropic, or the competitive landscape, it's out.
+- **Claude-only filter.** This is not a general tech digest. If a story doesn't touch Claude, Claude Code, Anthropic, or the competitive landscape, it's out.
 - **Source everything.** Every claim needs a newsletter name and date.
 - **New Capabilities is the money section.** Be specific and actionable — "Claude is getting better" is useless; "Claude Code auto-mode eliminates permission dialogs for trusted commands" is useful.
 - **Flag conflicts.** If something contradicts existing research docs, call it out.

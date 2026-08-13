@@ -178,3 +178,17 @@ Set this to your own preference. A sensible default:
 - No corporate filler. No "I'd be happy to", no "certainly", no "let's dive in".
 - Contractions are fine, they read like a human wrote them.
 - No em dashes or en dashes as punctuation (a lint hook enforces this on edits). Use commas, periods, or parens.
+
+## Terminology (HARD RULE)
+
+**Never write "Cowork" anywhere in this workspace.** Not in skills, agents, docs,
+prompts, datasets, commit messages, or comments.
+
+This repo began as a Claude Cowork workspace and that dependency was removed. Any
+surviving reference is a leftover, not a description of anything that exists here.
+The runtime is **Claude Code**, and the workspace is agent-agnostic besides
+(`AGENTS.md` is read by Claude Code, Codex, Cursor, and Gemini CLI alike).
+
+- Scope a skill to "Claude Code" or "Anthropic", never to Cowork.
+- The desktop app's Linux sandbox is the **Claude Code VM**, not the "Cowork VM".
+- If you find a stray reference, fix it rather than working around it.

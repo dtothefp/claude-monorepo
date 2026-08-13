@@ -10,8 +10,10 @@ Fetch a YouTube video transcript and return it to the user.
 ## How to run
 
 ```bash
-python3 .claude/skills/youtube-research/yt-transcript.py VIDEO_ID_OR_URL
+uv run --with youtube-transcript-api .claude/skills/youtube-research/yt-transcript.py VIDEO_ID_OR_URL
 ```
+
+`uv run --with` installs the dependency into an ephemeral environment on the fly, no venv setup and no touching system Python. If `uv` isn't available, fall back to `python3 .claude/skills/youtube-research/yt-transcript.py VIDEO_ID_OR_URL`, but that requires `youtube-transcript-api` already importable by whatever `python3` resolves to on this machine.
 
 Accepts:
 - Bare video ID: `wLdb3FHn7BA`
@@ -35,4 +37,4 @@ Save to the relevant project's `research/` directory as:
 research/youtube-VIDEOID-YYYY-MM-DD.txt
 ```
 
-No MCP connector required. The script uses the free `youtube-transcript-api` library installed at `/usr/local/lib/python3.x`.
+No MCP connector required. The script uses the free `youtube-transcript-api` library, fetched on demand by `uv run --with` (see above) rather than assumed to be pre-installed.

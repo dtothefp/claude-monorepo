@@ -59,7 +59,7 @@ venv/
 **/terraform.tfvars
 **/*.auto.tfvars
 
-# cowork-doctor: required entries
+# Required entries: tooling paths and per-account registries
 /app
 .gws-accounts.json
 .linear-accounts.json

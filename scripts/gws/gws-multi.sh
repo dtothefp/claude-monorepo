@@ -103,7 +103,7 @@ if [ -n "$CLIENT_SECRET_FILE" ]; then
     fi
 fi
 
-# Find the gws binary: prefer host install, fall back to .bin/gws (Cowork VM)
+# Find the gws binary: prefer host install, fall back to .bin/gws (Claude Code VM)
 GWS_BIN=""
 if command -v gws >/dev/null 2>&1; then
     GWS_BIN="$(command -v gws)"
@@ -131,7 +131,7 @@ fi
 # after a reauth. The exported .credentials/<acct>.json is a portable snapshot
 # that does NOT carry the RAPT, so once a reauth fires it goes stale and
 # refreshing from it fails with invalid_rapt. Only fall back to the export when
-# no keyring exists (e.g. Cowork VM bootstrap before any local auth login).
+# no keyring exists (e.g. Claude Code VM bootstrap before any local auth login).
 #
 # Passing GOOGLE_WORKSPACE_CLI_CREDENTIALS_FILE makes gws load that file in
 # preference to the keyring, so we must NOT pass it when the keyring is present.

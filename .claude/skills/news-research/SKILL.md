@@ -1,25 +1,25 @@
 ---
 name: news-research
 description: >
-  Search the web for Claude Cowork announcements, new features, community discussions,
+  Search the web for Claude Code announcements, new features, community discussions,
   and Anthropic news from the past 7 days, then summarize findings into a dated markdown
-  file. Use this skill whenever the user asks to research Cowork news, check for Cowork
-  updates, find recent Anthropic announcements about Cowork, look for community discussions
-  about Cowork, or wants a digest of what's new with Claude Cowork. Also trigger when the
-  user says things like 'what's new with Cowork', 'any Cowork updates', 'Cowork news',
-  'research Cowork features', 'Cowork changelog', or 'weekly Cowork digest'. Use this even
-  for general requests like 'catch me up on Cowork' or 'what did I miss in Cowork land'.
+  file. Use this skill whenever the user asks to research Claude Code news, check for Claude Code
+  updates, find recent Anthropic announcements about Claude Code, look for community discussions
+  about Claude Code, or wants a digest of what's new with Claude Code. Also trigger when the
+  user says things like 'what's new with Claude Code', 'any Claude Code updates', 'Claude Code news',
+  'research Claude Code features', 'Claude Code changelog', or 'weekly Claude Code digest'. Use this even
+  for general requests like 'catch me up on Claude Code' or 'what did I miss in Claude Code land'.
 ---
 
-# Cowork News Research
+# Claude Code News Research
 
-You are a research agent that finds and synthesizes the latest Claude Cowork news. Your job
+You are a research agent that finds and synthesizes the latest Claude Code news. Your job
 is to cast a wide net across official and community sources, then distill everything into a
 single, scannable markdown file the user can skim in under 3 minutes.
 
 ## Why this skill exists
 
-Cowork is evolving fast. The user is a senior engineer evaluating Cowork for client
+Claude Code is evolving fast. The user is a senior engineer evaluating Claude Code for client
 recommendations. Missing a feature launch or breaking change means stale advice. This skill
 automates the weekly scan so nothing slips through.
 
@@ -32,12 +32,12 @@ you're looking for signals across official channels, developer communities, and 
 
 Suggested searches (adapt phrasing to get good results):
 
-1. **Official announcements**: `Claude Cowork announcements 2026` or `Anthropic Cowork release`
-2. **Changelog / docs**: `Claude Cowork changelog` or `site:docs.claude.com Cowork`
-3. **Community discussion**: `Claude Cowork Reddit OR "Hacker News"` or `Claude Cowork discussion`
-4. **Social / X (Twitter)**: `Claude Cowork Twitter` or `Boris Cherny Cowork`
-5. **YouTube / video**: `Claude Cowork tutorial OR demo 2026`
-6. **Feature-specific** (if you know of recent buzz): e.g., `Cowork MCP servers`, `Cowork scheduled tasks`, `Cowork plugins`
+1. **Official announcements**: `Claude Code announcements 2026` or `Anthropic Claude Code release`
+2. **Changelog / docs**: `Claude Code changelog` or `site:docs.claude.com Claude Code`
+3. **Community discussion**: `Claude Code Reddit OR "Hacker News"` or `Claude Code discussion`
+4. **Social / X (Twitter)**: `Claude Code Twitter` or `Boris Cherny Claude Code`
+5. **YouTube / video**: `Claude Code tutorial OR demo 2026`
+6. **Feature-specific** (if you know of recent buzz): e.g., `Claude Code MCP servers`, `Claude Code scheduled tasks`, `Claude Code plugins`
 
 Use date-aware queries when possible (include the current year, or "this week", "past 7 days").
 
@@ -50,7 +50,7 @@ snippets — they're often truncated or misleading.
 Prioritize these sources (in order):
 1. anthropic.com/news and anthropic.com/engineering
 2. docs.claude.com (changelog, release notes)
-3. Posts by Boris Cherny (Cowork creator) or verified Anthropic staff
+3. Posts by Boris Cherny (Claude Code creator) or verified Anthropic staff
 4. Reddit r/ClaudeAI, r/anthropic
 5. Hacker News threads
 6. YouTube videos with significant view counts
@@ -59,11 +59,11 @@ Prioritize these sources (in order):
 
 Organize what you found into the output format below. The key editorial decisions:
 
-- **Separate signal from noise.** A passing mention of Cowork in a general AI thread is not
+- **Separate signal from noise.** A passing mention of Claude Code in a general AI thread is not
   a finding. A detailed changelog entry or feature demo is.
-- **Flag capability changes.** Anything that changes what Cowork can or can't do gets called
+- **Flag capability changes.** Anything that changes what Claude Code can or can't do gets called
   out explicitly — these affect the user's client recommendations.
-- **Note the Cowork vs Claude Code boundary.** If a finding clarifies when to use Cowork vs
+- **Note the Claude Code vs Claude Code boundary.** If a finding clarifies when to use Claude Code vs
   Claude Code (or shifts that boundary), flag it in the dedicated section.
 - **Be honest about gaps.** If a search category turned up nothing, say so. "No Reddit
   discussion found this week" is more useful than silence.
@@ -71,14 +71,14 @@ Organize what you found into the output format below. The key editorial decision
 ## Output format
 
 Save the file to the project's `/research/` directory with the filename pattern
-`YYYY-MM-DD_cowork-news.md` using today's date.
+`YYYY-MM-DD_claude-code-news.md` using today's date.
 
 Create the `/research/` directory if it doesn't exist.
 
 Use this structure:
 
 ```markdown
-# Cowork News Digest — YYYY-MM-DD
+# Claude Code News Digest — YYYY-MM-DD
 
 ## TL;DR
 <!-- 2-4 sentences. What's the single most important thing from this week? -->
@@ -90,7 +90,7 @@ Use this structure:
 
 ### New or Updated Capabilities
 <!-- Specific features, tools, integrations, or behavioral changes. Be concrete:
-     "Cowork now supports X" not "improvements were made". -->
+     "Claude Code now supports X" not "improvements were made". -->
 
 ### Community Discussion
 <!-- Reddit, HN, Twitter/X threads worth knowing about. Summarize the discussion,
@@ -100,8 +100,8 @@ Use this structure:
 <!-- YouTube videos, walkthroughs, demos. Note channel, rough view count, and
      whether it reveals non-obvious techniques. -->
 
-## Cowork vs Claude Code Boundary
-<!-- Anything that clarifies or shifts when to use Cowork vs Claude Code.
+## Claude Code vs Claude Code Boundary
+<!-- Anything that clarifies or shifts when to use Claude Code vs Claude Code.
      If nothing this week, say "No boundary-shifting findings this week." -->
 
 ## Consulting Relevance

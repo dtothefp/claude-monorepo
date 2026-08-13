@@ -3,19 +3,19 @@ name: ai-ecosystem-research
 description: >
   Search the broader AI ecosystem (newsletters, YouTube, web/forums, GitHub trending) for
   AI infrastructure movement filtered through the workspace's 5 core domains — NOT
-  Cowork-only. Use this skill whenever the user wants a wider-than-Cowork weekly sweep,
+  Claude-Code-only. Use this skill whenever the user wants a wider-than-Claude-Code weekly sweep,
   AI infra digest, ecosystem trend brief, or "what's moving across AI tooling this week."
   Triggers: "AI ecosystem research," "weekly AI sweep," "what's new across AI," "broader
   AI digest," "AI infra trends." Pairs with news-research / youtube-research
-  / newsletter-digest (those are Cowork-scoped slices); this skill is the broader filter.
+  / newsletter-digest (those are Claude Code-scoped slices); this skill is the broader filter.
   Reads .claude/context/domains-scope.md to know what's in/out of scope.
 ---
 
 # AI Ecosystem Research
 
-Cast a wide net across the AI ecosystem and return a markdown digest filtered through the workspace's 5 core domains. The 3 existing Cowork-scoped research skills (`newsletter-digest`, `news-research`, `youtube-research`) handle Anthropic-specific signal. **This skill handles everything else** — agent frameworks, video/voice/image gen, MCP servers, web app tooling, monorepo patterns, marketing automation, design systems.
+Cast a wide net across the AI ecosystem and return a markdown digest filtered through the workspace's 5 core domains. The 3 existing Claude Code-scoped research skills (`newsletter-digest`, `news-research`, `youtube-research`) handle Anthropic-specific signal. **This skill handles everything else** — agent frameworks, video/voice/image gen, MCP servers, web app tooling, monorepo patterns, marketing automation, design systems.
 
-This skill is called by the `infra-improver` agent in parallel with the 3 Cowork skills. It can also be invoked manually.
+This skill is called by the `infra-improver` agent in parallel with the 3 Claude Code skills. It can also be invoked manually.
 
 ## Why this skill exists
 
@@ -262,9 +262,9 @@ When invoked standalone (not by the orchestrator), this is the user's direct rea
 
 ## What this skill does NOT do
 
-- Does not handle Cowork-specific news (use `news-research`)
-- Does not handle Cowork-specific YouTube (use `youtube-research`)
-- Does not handle Cowork-specific newsletter content (use `newsletter-digest`)
-- Does not write the integrated 5-domain brief — that's the `infra-improver` agent's job, which calls this skill alongside the Cowork trio
+- Does not handle Claude Code-specific news (use `news-research`)
+- Does not handle Claude Code-specific YouTube (use `youtube-research`)
+- Does not handle Claude Code-specific newsletter content (use `newsletter-digest`)
+- Does not write the integrated 5-domain brief — that's the `infra-improver` agent's job, which calls this skill alongside the Claude Code trio
 - Does not install or download anything — pure research output
 - Does not post to Slack — that's the orchestrator's job

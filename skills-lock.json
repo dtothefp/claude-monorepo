@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "phoenix-cli": {
+      "source": "Arize-ai/phoenix",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/phoenix-cli/SKILL.md",
+      "computedHash": "b4807c05a4fb4b27fc06ce5818ce75b2ec7ce956e1014479a83aa550dd2d3745"
+    },
+    "phoenix-evals": {
+      "source": "Arize-ai/phoenix",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/phoenix-evals/SKILL.md",
+      "computedHash": "614535150398f86427759284616fa80c59b1e6f3da281bad14b17aa76f86ec44"
+    },
+    "phoenix-tracing": {
+      "source": "Arize-ai/phoenix",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/phoenix-tracing/SKILL.md",
+      "computedHash": "8106e94c90dd4b7cb2de745fdd6aca79a01bc1040c1e40732e977d4cbdd5b1d1"
+    }
+  }
+}
