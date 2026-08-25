@@ -132,9 +132,24 @@ If you ever see a real key about to be committed, stop and flag it.
 
 ## Directory rules
 
-**Parent allowed paths:** `AGENTS.md`, `README.md`, `START-HERE.md`, `TODO.md`, `GOVERNANCE.md`, `.env.example`, `scripts/`, `packages/`, `research/`, `decisions/`, `.claude/`, `context/`
+**Parent allowed paths:** `AGENTS.md`, `README.md`, `START-HERE.md`, `TODO.md`, `GOVERNANCE.md`, `.env.example`, `scripts/`, `packages/`, `research/`, `decisions/`, `.claude/`, `context/`, `.agents/` (gitignored, see below)
 
-Don't create ad-hoc folders (`tmp/`, `output/`, `data/`). Scratch files go in `context/` (gitignored). Nothing in the parent root besides the top-level `.md` files and `.env.example`.
+`.agents/` holds third-party skills installed by `npx skills`, and is
+gitignored along with the `.claude/skills/*` symlinks that point into it.
+`skills-lock.json` is committed and pins the versions, so a fresh clone restores
+them with one command rather than carrying vendored third-party code in a public
+repo:
+
+```bash
+npx skills add https://github.com/ai-evals-course/evals-skills
+```
+
+That installs the eight eval skills (`error-discovery`, `build-review-interface`,
+`validate-evaluator`, `eval-audit`, `write-judge-prompt`,
+`generate-synthetic-data`, `evaluate-rag`, `start`). `npx skills update` upgrades
+them. Skills run with full agent permissions, so read one before trusting it.
+
+Don't create other ad-hoc folders (`tmp/`, `output/`, `data/`). Scratch files go in `context/` (gitignored). Nothing in the parent root besides the top-level `.md` files and `.env.example`.
 
 ## Research wiki (Karpathy pattern)
 

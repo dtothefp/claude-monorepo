@@ -65,3 +65,18 @@ venv/
 .linear-accounts.json
 .slack-accounts.json
 .bin/
+
+# Third-party skills installed by `npx skills`. Vendored content stays out of
+# git; `skills-lock.json` pins the versions and is committed, so the install is
+# reproducible without carrying someone else's code in a public repo.
+# `.claude/skills/*` symlinks point into `.agents/`, so they are ignored too or
+# a fresh clone gets dangling links.
+.agents/
+.claude/skills/build-review-interface
+.claude/skills/error-discovery
+.claude/skills/eval-audit
+.claude/skills/evaluate-rag
+.claude/skills/generate-synthetic-data
+.claude/skills/start
+.claude/skills/validate-evaluator
+.claude/skills/write-judge-prompt
